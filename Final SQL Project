@@ -1,0 +1,76 @@
+-- Working with a dataset called Chinook, which represents a digital media store. Extracting from database points of interest for analysis.
+
+#Analysis:
+
+ -- Show Customers (their full names, customer ID, and country) who are not in the US. 
+SELECT FirstName, LastName, CustomerId, Country 
+FROM customers 
+WHERE Country <> 'USA';
+
+-- Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.
+SELECT CUST.FirstName, CUST.LastName, INV.InvoiceId, INV.InvoiceDate, INV.BillingCountry
+FROM invoices INV
+LEFT JOIN customers CUST
+ON INV.CustomerId = CUST.CustomerId 
+WHERE INV.BillingCountry = 'Brazil';
+
+-- Provide a query that shows the invoices associated with each sales agent. The resulting table will include the Sales Agent's full name.
+SELECT EMPL.Firstname, EMPL.LastName, INV.InvoiceId
+FROM employees EMPL 
+JOIN customers CUST 
+ON CUST.SupportRepId = EMPL.EmployeeId
+JOIN invoices INV 
+ON INV.CustomerId = CUST.CustomerId;
+
+-- How many invoices were there in 2009?
+SELECT COUNT(*)
+FROM invoices
+WHERE InvoiceDate BETWEEN '2009-01-01' AND '2009-12-31';
+
+-- Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+SELECT TRA.Name AS 'Track Name', 
+ALB.Title AS 'Album Title', 
+MDT.Name AS 'Media Type', 
+GNR.Name AS 'Genre'
+FROM tracks TRA
+JOIN albums ALB 
+ON TRA.AlbumId = ALB.AlbumId 
+JOIN media_types MDT
+ON MDT.MediaTypeId = TRA.MediaTypeId
+JOIN genres GNR
+ON GNR.GenreId = TRA.GenreId;
+
+ -- How many invoices per agent in 2009? 
+ SELECT EMP.FirstName, EMP.LastName, COUNT(INVI.quantity) AS 'Total Invoices'
+ FROM employees EMP
+ JOIN customers CUST
+ ON EMP.EmployeeID = CUST.SupportRepID
+ JOIN invoices INV
+ ON CUST.CustomerID = INV.InvoiceID
+ JOIN invoice_items INVI
+ ON INV.InvoiceID = INVI.InvoiceLineID
+ GROUP BY EMP.FirstName;
+ 
+-- Which employee had the most diverse customers based on countries?
+SELECT EMP.FirstName, EMP.LastName, 
+COUNT(distinct CUST.country) AS 'Most Countries'
+FROM employees EMP
+JOIN customers CUST
+ON EMP.EmployeeID = CUST.SupportRepID
+GROUP BY EMP.FirstName
+ORDER BY 'Most Countries' desc
+LIMIT 1;
+
+-- Which artist(s) have the most albums sold?
+SELECT ARTS.Name AS ARTIST,
+ALB.Title AS Album,
+COUNT(INVI.quantity) AS AlbumsSold
+FROM invoice_items INVI
+JOIN tracks TRA
+ON INVI.TrackID = TRA.TrackID
+JOIN albums ALB
+ON TRA.TrackID = ALB.AlbumID
+JOIN artists ARTS
+ON ALB.ArtistID = ARTS.ArtistID
+GROUP BY Album
+ORDER BY AlbumsSold desc;
