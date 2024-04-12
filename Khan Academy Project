@@ -1,0 +1,41 @@
+-- Using Khan Academy lessons to create projects that reflect knowledge on relational queries in SQL
+
+CREATE TABLE famous_people (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fullname TEXT,
+    spouse_id INTEGER);
+    
+INSERT INTO famous_people (id, fullname, spouse_id) VALUES
+(1, 'Brad Pitt', 2),
+(2, 'Angelina Jolie', 1),
+(3, 'John Krasinki', 4),
+(4, 'Emily Blunt', 3),
+(5, 'Ryan Reynolds', 6),
+(6, 'Blake Lively', 5),
+(7, 'Kit Harrington', 8),
+(8, 'Rose Leslie', 7);
+    
+CREATE TABLE famous_projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    movie TEXT);
+    
+INSERT INTO famous_projects (id, name, movie) VALUES
+(1, 'Brad Pitt', 'Mr & Mrs Smith'),
+(2, 'Angelina Jolie', 'Mr & Mrs Smith'),
+(3, 'John Krasinki', 'A Quiet Place'),
+(4, 'Emily Blunt', 'A Quiet PLace'),
+(5, 'Ryan Reynolds', 'Green Lantern'),
+(6, 'Blake Lively', 'Green Lantern'),
+(7, 'Kit Harrington', 'Game of Thrones'),
+(8, 'Rose Leslie', 'Game of Thrones');
+
+SELECT fullname, spouse_id
+FROM famous_people;
+
+SELECT famous_people.fullname, spouse.fullname, famous_projects.movie
+FROM famous_people
+JOIN famous_people spouse
+ON famous_people.spouse_id=spouse.id
+JOIN famous_projects
+ON famous_people.id=famous_projects.id;
